@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🎂 Happy Birthday!</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!-- Twemoji for crisp cross-platform emoji -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  /* set by JS per-theme */
+  --bg-a: #fff0f6;
+  --bg-b: #fce7f3;
+  --bg-c: #fdf2ff;
+  --ink:  #1a0a2e;
+  --card-bg: rgba(255,255,255,0.72);
+  --card-border: rgba(255,192,203,0.5);
+  --text-main: #2d1b4e;
+  --text-sub: rgba(45,27,78,0.55);
+  --accent-a: #f472b6;
+  --accent-b: #c084fc;
+  --accent-c: #fb7185;
+  --glow-a: rgba(244,114,182,0.35);
+  --glow-b: rgba(192,132,252,0.3);
+  --shimmer-a: #f9a8d4;
+  --shimmer-b: #d8b4fe;
+  --shimmer-c: #fda4af;
+}
+
+html,body { width:100%; height:100%; overflow:hidden; touch-action:manipulation; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Aurora background – pure CSS, GPU only ── */
+.aurora {
+  position: fixed; inset: 0; z-index: 0;
+  background: var(--bg-a);
+  overflow: hidden;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.aurora-blob:nth-child(1) {
+  width: 65vmax; height: 65vmax;
+  top: -20%; left: -10%;
+  background: var(--bg-b);
+  animation: blobDrift1 12s ease-in-out infinite alternate;
+}
+.aurora-blob:nth-child(2) {
+  width: 55vmax; height: 55vmax;
+  bottom: -15%; right: -10%;
+  background: var(--bg-c);
+  animation: blobDrift2 15s ease-in-out infinite alternate;
+}
+.aurora-blob:nth-child(3) {
+  width: 40vmax; height: 40vmax;
+  top: 40%; left: 30%;
+  background: var(--bg-b);
+  opacity: 0.35;
+  animation: blobDrift3 18s ease-in-out infinite alternate;
+}
+
+@keyframes blobDrift1 { to { transform: translate(8%, 12%) scale(1.08); } }
+@keyframes blobDrift2 { to { transform: translate(-8%, -10%) scale(1.12); } }
+@keyframes blobDrift3 { to { transform: translate(5%, -8%) scale(0.92); } }
+
+/* ── Canvas ── */
+#confetti { position:fixed; inset:0; pointer-events:none; z-index:1; }
+
+/* ── Floating emoji layer ── */
+#floatLayer { position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
+
+/* ── Scene ── */
+.scene {
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  padding: clamp(12px,4vw,28px) clamp(14px,5vw,28px);
+  width: 100%;
+  max-width: min(440px, 96vw);
+  will-change: transform;
+}
+
+/* ── Cake ── */
+.cake-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.cake-emoji {
+  display: block;
+  width: clamp(90px,22vw,130px);
+  height: clamp(90px,22vw,130px);
+  margin: 0 auto;
+  cursor: pointer;
+  user-select: none;
+  animation: cakeFloat 3s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+  will-change: transform;
+  filter: drop-shadow(0 8px 24px var(--glow-a)) drop-shadow(0 2px 8px var(--glow-b));
+  transition: filter 0.3s;
+}
+
+@keyframes cakeFloat {
+  0%,100% { transform: translateY(0) rotate(-1.5deg) scale(1); }
+  45%      { transform: translateY(-14px) rotate(1.5deg) scale(1.05); }
+  65%      { transform: translateY(-9px) rotate(0deg) scale(1.03); }
+}
+
+/* Orbiting emojis */
+.orbit-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+.orbiter {
+  position: absolute;
+  width: 28px; height: 28px;
+  margin: -14px 0 0 -14px;
+  animation: orbitSpin linear infinite;
+  will-change: transform;
+}
+.orbiter img { width: 100%; height: 100%; }
+
+@keyframes orbitSpin {
+  from { transform: rotate(0deg) translateX(var(--r)) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(var(--r)) rotate(-360deg); }
+}
+
+/* ── Text ── */
+.label-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-a);
+  margin-bottom: 8px;
+  backdrop-filter: blur(8px);
+  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  opacity: 0;
+  animation-delay: 0.05s;
+}
+
+.happy-text {
+  font-family: 'Pacifico', cursive;
+  font-size: clamp(1.6rem, 6.5vw, 2.4rem);
+  line-height: 1.1;
+  color: var(--text-main);
+  animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+  opacity: 0;
+  animation-delay: 0.15s;
+  text-shadow: 0 2px 0 rgba(255,255,255,0.8);
+}
+
+.name-text {
+  font-family: 'Pacifico', cursive;
+  font-size: clamp(2.2rem, 10vw, 3.8rem);
+  line-height: 1.1;
+  word-break: break-word;
+  background: linear-gradient(135deg, var(--accent-a) 0%, var(--accent-b) 50%, var(--accent-c) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) forwards, shimmerMove 4s linear 1s infinite;
+  opacity: 0;
+  animation-delay: 0.28s, 1s;
+  filter: drop-shadow(0 2px 8px var(--glow-a));
+}
+
+@keyframes shimmerMove { to { background-position: 200% center; } }
+
+.bang {
+  display: inline-block;
+  animation: bangPop 1.8s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+@keyframes bangPop {
+  0%,100% { transform: rotate(-10deg) scale(1.1); }
+  50%      { transform: rotate(10deg) scale(1.35); }
+}
+
+/* ── Divider ── */
+.deco-divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 10px auto 12px;
+  animation: fadeIn 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.5s;
+}
+.deco-line {
+  flex: 1; max-width: 70px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-a));
+  border-radius: 999px;
+}
+.deco-line.right { background: linear-gradient(90deg, var(--accent-b), transparent); }
+.deco-gem { width: 20px; height: 20px; }
+
+/* ── Message card ── */
+.message-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid var(--card-border);
+  border-radius: 22px;
+  padding: clamp(14px,4vw,22px) clamp(16px,5vw,24px);
+  margin: 0 auto 10px;
+  width: 100%;
+  max-width: 390px;
+  position: relative;
+  overflow: hidden;
+  animation: cardReveal 0.65s cubic-bezier(0.22,1,0.36,1) forwards;
+  opacity: 0;
+  animation-delay: 0.55s;
+  box-shadow: 0 4px 32px var(--glow-a), 0 1px 0 rgba(255,255,255,0.9) inset;
+}
+
+.message-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; right: -50%; bottom: -50%;
+  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.08) 60deg, transparent 120deg);
+  animation: cardShine 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes cardShine { to { transform: rotate(360deg); } }
+@keyframes cardReveal {
+  from { opacity:0; transform: translateY(22px) scale(0.97); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+.message-text {
+  font-size: clamp(0.82rem, 3.2vw, 0.97rem);
+  color: var(--text-main);
+  font-weight: 600;
+  line-height: 1.72;
+  position: relative; z-index:1;
+}
+
+.from-text {
+  font-size: clamp(0.75rem, 2.8vw, 0.88rem);
+  color: var(--text-sub);
+  font-weight: 700;
+  font-style: italic;
+  animation: fadeIn 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.85s;
+}
+
+/* ── Emoji row ── */
+.emoji-row {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2.5vw, 14px);
+  flex-wrap: wrap;
+  margin-top: 10px;
+  animation: fadeIn 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 1s;
+}
+
+.emoji-pill {
+  width: clamp(36px,9vw,48px);
+  height: clamp(36px,9vw,48px);
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  backdrop-filter: blur(8px);
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: pillFloat ease-in-out infinite;
+  box-shadow: 0 2px 8px var(--glow-b);
+}
+
+.emoji-pill:hover { transform: translateY(-4px) scale(1.15); box-shadow: 0 8px 20px var(--glow-a); }
+.emoji-pill:active { transform: scale(0.88); }
+
+.emoji-pill img { width: 55%; height: 55%; pointer-events: none; }
+
+.emoji-pill:nth-child(1) { animation-duration:2.4s; animation-delay:0s; }
+.emoji-pill:nth-child(2) { animation-duration:2.8s; animation-delay:0.35s; }
+.emoji-pill:nth-child(3) { animation-duration:2.5s; animation-delay:0.7s; }
+.emoji-pill:nth-child(4) { animation-duration:3s;   animation-delay:1.05s; }
+.emoji-pill:nth-child(5) { animation-duration:2.7s; animation-delay:1.4s; }
+.emoji-pill:nth-child(6) { animation-duration:2.6s; animation-delay:0.55s; }
+
+@keyframes pillFloat {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-7px) rotate(3deg); }
+}
+
+/* ── Ripple ── */
+.ripple {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99;
+  border: 2.5px solid var(--accent-a);
+  animation: rippleOut 0.65s ease-out forwards;
+  transform: translate(-50%,-50%);
+}
+@keyframes rippleOut {
+  from { width:0; height:0; opacity:0.9; }
+  to   { width:90px; height:90px; opacity:0; }
+}
+
+/* ── CSS ambient floaters ── */
+.css-floater {
+  position: fixed;
+  pointer-events: none;
+  z-index: 3;
+  animation: cssFloat linear forwards;
+  opacity: 0;
+}
+.css-floater img { width: 100%; height: 100%; }
+
+@keyframes cssFloat {
+  0%   { opacity:0; transform: translateY(0) rotate(0deg) scale(0.8); }
+  8%   { opacity:1; }
+  88%  { opacity:0.8; }
+  100% { opacity:0; transform: translateY(-65vh) rotate(200deg) scale(1.1); }
+}
+
+/* ── Keyframes ── */
+@keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn  { from { opacity:0; }                             to { opacity:1; } }
+@keyframes popIn   { from { opacity:0; transform:scale(0.7); }       to { opacity:1; transform:scale(1); } }
+
+/* ── Twemoji sizing ── */
+img.emoji {
+  height: 1em; width: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+  display: inline-block;
+}
+</style>
+</head>
+<body id="body">
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+
+<canvas id="confetti"></canvas>
+<div id="floatLayer"></div>
+
+<div class="scene" id="scene">
+
+  <!-- Cake -->
+  <div class="cake-wrap" id="cakeWrap">
+    <img class="cake-emoji" id="cakeImg" src="" alt="🎂" onclick="cakeClick()">
+    <div class="orbit-ring" id="orbitRing"></div>
+  </div>
+
+  <!-- Tag -->
+  <div class="label-tag" id="labelTag">
+    <img src="" id="tagStarImg" style="width:14px;height:14px;" alt="✨"> Today is your day
+  </div>
+
+  <!-- Happy Birthday -->
+  <div class="happy-text">✨ Happy Birthday</div>
+  <div class="name-text" id="nameText">Beautiful You<span class="bang">!</span></div>
+
+  <!-- Divider -->
+  <div class="deco-divider">
+    <div class="deco-line"></div>
+    <img src="" id="gemImg" class="deco-gem" alt="🌸">
+    <div class="deco-line right"></div>
+  </div>
+
+  <!-- Message -->
+  <div class="message-card">
+    <div class="message-text" id="messageText">
+      Wishing you a day filled with sunshine, laughter, and all the things that make you smile.
+      May this birthday bring you closer to all your dreams.
+      You deserve every bit of happiness in this world! 🌟
+    </div>
+  </div>
+
+  <div class="from-text" id="fromText">— With love 💖</div>
+
+  <!-- Emoji pills -->
+  <div class="emoji-row" id="emojiRow">
+    <!-- filled by JS -->
+  </div>
+
+</div>
+
+<script>
+/* ── Twemoji helper ── */
+function twSrc(cp) {
+  // cp = codepoint string like '1f382'
+  return `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/${cp}.svg`;
+}
+
+// Emoji codepoints
+const CP = {
+  cake:   '1f382', star:   '2b50', sparkles:'2728', ribbon:'1f380',
+  heart:  '1f496', cherry: '1f338', gift:   '1f381', champagne:'1f942',
+  party:  '1f389', balloon:'1f388', rainbow:'1f308', sun:'2600-fe0f',
+  fire:   '1f525', unicorn:'1f984', butterfly:'1f98b', gem:'1f48e',
+  crown:  '1f451', music:  '1f3b5', confetti:'1f38a', moon:'1f319'
+};
+
+function src(key) { return twSrc(CP[key]); }
+
+/* ── Theme configs (pastel light) ── */
+const THEMES = {
+  rose: {
+    bga:'#fff0f8', bgb:'#fce7f3', bgc:'#fdf2ff',
+    accA:'#f472b6', accB:'#c084fc', accC:'#fb7185',
+    glowA:'rgba(244,114,182,0.28)', glowB:'rgba(192,132,252,0.22)',
+    cardBg:'rgba(255,255,255,0.75)', cardBorder:'rgba(244,114,182,0.3)',
+    textMain:'#3b1a4e', textSub:'rgba(59,26,78,0.5)',
+    orbiters: ['sparkles','heart','ribbon'],
+    gem: 'cherry', pills: ['cake','balloon','cherry','gift','champagne','party'],
+    floaters: ['heart','sparkles','ribbon','balloon','cherry']
+  },
+  galaxy: {
+    bga:'#f0f0ff', bgb:'#ede9ff', bgc:'#f5f0ff',
+    accA:'#818cf8', accB:'#a78bfa', accC:'#c084fc',
+    glowA:'rgba(129,140,248,0.28)', glowB:'rgba(167,139,250,0.22)',
+    cardBg:'rgba(255,255,255,0.72)', cardBorder:'rgba(129,140,248,0.3)',
+    textMain:'#1e1b4b', textSub:'rgba(30,27,75,0.5)',
+    orbiters: ['sparkles','star','moon'],
+    gem: 'gem', pills: ['star','moon','sparkles','rainbow','unicorn','crown'],
+    floaters: ['star','sparkles','moon','gem','unicorn']
+  },
+  sunset: {
+    bga:'#fff7f0', bgb:'#ffe4cc', bgc:'#fff0f5',
+    accA:'#fb923c', accB:'#f472b6', accC:'#fbbf24',
+    glowA:'rgba(251,146,60,0.28)', glowB:'rgba(244,114,182,0.22)',
+    cardBg:'rgba(255,255,255,0.75)', cardBorder:'rgba(251,146,60,0.3)',
+    textMain:'#431206', textSub:'rgba(67,18,6,0.5)',
+    orbiters: ['sun','fire','sparkles'],
+    gem: 'sun', pills: ['sun','fire','balloon','ribbon','music','party'],
+    floaters: ['sun','fire','sparkles','balloon','ribbon']
+  },
+  ocean: {
+    bga:'#f0f9ff', bgb:'#e0f2fe', bgc:'#eff6ff',
+    accA:'#38bdf8', accB:'#60a5fa', accC:'#34d399',
+    glowA:'rgba(56,189,248,0.28)', glowB:'rgba(96,165,250,0.22)',
+    cardBg:'rgba(255,255,255,0.75)', cardBorder:'rgba(56,189,248,0.3)',
+    textMain:'#0c2840', textSub:'rgba(12,40,64,0.5)',
+    orbiters: ['sparkles','rainbow','star'],
+    gem: 'rainbow', pills: ['rainbow','star','sparkles','balloon','gift','champagne'],
+    floaters: ['rainbow','sparkles','star','balloon','heart']
+  },
+  forest: {
+    bga:'#f0fdf4', bgb:'#dcfce7', bgc:'#f0fdf4',
+    accA:'#34d399', accB:'#4ade80', accC:'#86efac',
+    glowA:'rgba(52,211,153,0.28)', glowB:'rgba(74,222,128,0.22)',
+    cardBg:'rgba(255,255,255,0.75)', cardBorder:'rgba(52,211,153,0.3)',
+    textMain:'#052e16', textSub:'rgba(5,46,22,0.5)',
+    orbiters: ['butterfly','cherry','sparkles'],
+    gem: 'butterfly', pills: ['butterfly','cherry','rainbow','gift','balloon','sparkles'],
+    floaters: ['butterfly','cherry','sparkles','rainbow','heart']
+  },
+  gold: {
+    bga:'#fffbeb', bgb:'#fef9c3', bgc:'#fef3c7',
+    accA:'#f59e0b', accB:'#fbbf24', accC:'#fcd34d',
+    glowA:'rgba(245,158,11,0.28)', glowB:'rgba(251,191,36,0.22)',
+    cardBg:'rgba(255,255,255,0.75)', cardBorder:'rgba(245,158,11,0.3)',
+    textMain:'#451a03', textSub:'rgba(69,26,3,0.5)',
+    orbiters: ['crown','star','sparkles'],
+    gem: 'crown', pills: ['crown','star','champagne','gift','party','music'],
+    floaters: ['crown','star','sparkles','champagne','ribbon']
+  }
+};
+
+/* ── Read params ── */
+function gp(k) { return new URLSearchParams(location.search).get(k); }
+function esc(s) {
+  const d=document.createElement('div');
+  d.appendChild(document.createTextNode(String(s)));
+  return d.innerHTML;
+}
+
+const name  = gp('n') || 'Beautiful You';
+const from  = gp('f') || 'With love';
+const msg   = gp('m') || 'Wishing you a day filled with sunshine, laughter, and all the things that make you smile. May this birthday bring you closer to all your dreams. You deserve every bit of happiness in this world!';
+const theme = gp('t') || 'rose';
+const T = THEMES[theme] || THEMES.rose;
+
+document.title = '🎂 Happy Birthday ' + name + '!';
+
+/* ── Apply CSS vars ── */
+const R = document.documentElement.style;
+R.setProperty('--bg-a', T.bga);
+R.setProperty('--bg-b', T.bgb);
+R.setProperty('--bg-c', T.bgc);
+R.setProperty('--accent-a', T.accA);
+R.setProperty('--accent-b', T.accB);
+R.setProperty('--accent-c', T.accC);
+R.setProperty('--glow-a', T.glowA);
+R.setProperty('--glow-b', T.glowB);
+R.setProperty('--card-bg', T.cardBg);
+R.setProperty('--card-border', T.cardBorder);
+R.setProperty('--text-main', T.textMain);
+R.setProperty('--text-sub', T.textSub);
+
+/* ── Twemoji images ── */
+document.getElementById('cakeImg').src = src('cake');
+document.getElementById('gemImg').src  = src(T.gem);
+document.getElementById('tagStarImg').src = src('sparkles');
+
+/* ── Orbiting emojis ── */
+const ring = document.getElementById('orbitRing');
+const radii = [52, 68, 84];
+T.orbiters.forEach((key, i) => {
+  const el = document.createElement('div');
+  el.className = 'orbiter';
+  const speed = [7, 10, 13][i];
+  const dir = i % 2 === 0 ? 1 : -1;
+  const r = radii[i];
+  el.style.cssText = `--r:${r}px; animation-duration:${speed}s; animation-direction:${dir===1?'normal':'reverse'}`;
+  const img = document.createElement('img');
+  img.src = src(key);
+  el.appendChild(img);
+  ring.appendChild(el);
+});
+
+/* ── Name + message ── */
+document.getElementById('nameText').innerHTML = esc(name) + '<span class="bang">!</span>';
+document.getElementById('fromText').innerHTML = '— ' + esc(from) + ' 💖';
+document.getElementById('messageText').innerHTML = esc(msg).replace(/\n/g,'<br>');
+
+// Run twemoji on message text so inline emoji look crisp
+twemoji.parse(document.getElementById('messageText'), { folder: '72x72', ext: '.svg', base: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/' });
+twemoji.parse(document.getElementById('fromText'), { folder: '72x72', ext: '.svg', base: 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/' });
+
+/* ── Emoji pills ── */
+const pillRow = document.getElementById('emojiRow');
+T.pills.forEach(key => {
+  const pill = document.createElement('div');
+  pill.className = 'emoji-pill';
+  const img = document.createElement('img');
+  img.src = src(key);
+  img.alt = key;
+  pill.appendChild(img);
+  pill.addEventListener('click', () => pillClick(pill, key));
+  pillRow.appendChild(pill);
+});
+
+/* ── Confetti engine (GPU-friendly) ── */
+const cv = document.getElementById('confetti');
+const ctx = cv.getContext('2d');
+let W, H;
+let confetti = [];
+
+const CONF_COLORS = [T.accA, T.accB, T.accC, '#fff', '#fde68a', '#a5f3fc', '#fbcfe8'];
+const CONF_KEYS   = ['sparkles','heart','ribbon','balloon','star','cherry','gift'];
+
+function resize() {
+  W = cv.width = window.innerWidth;
+  H = cv.height = window.innerHeight;
+}
+
+function rand(a,b) { return Math.random()*(b-a)+a; }
+
+// Pre-load twemoji images for canvas use
+const emojiImgCache = {};
+CONF_KEYS.forEach(key => {
+  const im = new Image();
+  im.src = src(key);
+  emojiImgCache[key] = im;
+});
+
+class Confetto {
+  constructor(bx, by, isBurst) {
+    this.isBurst = isBurst;
+    this.bx = bx; this.by = by;
+    this.reset();
+  }
+  reset() {
+    if (this.isBurst) {
+      this.x = this.bx + rand(-25,25);
+      this.y = this.by + rand(-25,25);
+      this.vy = rand(-10,-3);
+    } else {
+      this.x = rand(0, W);
+      this.y = H + rand(10,50);
+      this.vy = rand(-2,-0.5);
+    }
+    this.vx      = rand(-2.5, 2.5);
+    this.alpha   = 1;
+    this.decay   = this.isBurst ? rand(0.014,0.026) : rand(0.003,0.009);
+    this.size    = rand(8, 22);
+    this.color   = CONF_COLORS[Math.floor(rand(0, CONF_COLORS.length))];
+    this.isEmoji = Math.random() < 0.32;
+    this.emojiKey= CONF_KEYS[Math.floor(rand(0, CONF_KEYS.length))];
+    this.rot     = rand(0, Math.PI*2);
+    this.rotSpd  = rand(-0.12, 0.12);
+    this.gravity = 0.055;
+    this.wobble  = rand(0, Math.PI*2);
+    this.wobSpd  = rand(0.025, 0.07);
+    this.shape   = ['rect','circle','diamond'][Math.floor(rand(0,3))];
+    this.done    = false;
+  }
+  update() {
+    this.wobble += this.wobSpd;
+    this.x += this.vx + Math.sin(this.wobble) * 0.6;
+    this.vy += this.gravity;
+    this.y  += this.vy;
+    this.alpha -= this.decay;
+    this.rot   += this.rotSpd;
+    if (this.alpha <= 0 || this.y > H + 70) {
+      if (this.isBurst) { this.done = true; return; }
+      this.reset();
+    }
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.alpha);
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rot);
+
+    if (this.isEmoji) {
+      const im = emojiImgCache[this.emojiKey];
+      if (im && im.complete && im.naturalWidth) {
+        ctx.drawImage(im, -this.size/2, -this.size/2, this.size, this.size);
+      }
+    } else {
+      ctx.fillStyle = this.color;
+      if (this.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size/2, 0, Math.PI*2);
+        ctx.fill();
+      } else if (this.shape === 'rect') {
+        ctx.fillRect(-this.size/2, -this.size/4, this.size, this.size/2);
+      } else {
+        // diamond
+        ctx.beginPath();
+        ctx.moveTo(0, -this.size/2);
+        ctx.lineTo(this.size/2, 0);
+        ctx.lineTo(0, this.size/2);
+        ctx.lineTo(-this.size/2, 0);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+}
+
+function burst(x, y, n) {
+  for (let i = 0; i < n; i++) confetti.push(new Confetto(x, y, true));
+}
+
+function animLoop() {
+  ctx.clearRect(0, 0, W, H);
+  confetti = confetti.filter(c => !c.done);
+  confetti.forEach(c => { c.update(); c.draw(); });
+  requestAnimationFrame(animLoop);
+}
+
+// Init
+resize();
+confetti = Array.from({length: 55}, () => new Confetto(0, 0, false));
+
+// Grand opening cannon
+setTimeout(() => {
+  burst(W/2, H/2, 90);
+  setTimeout(() => burst(W*0.15, H*0.5, 45), 220);
+  setTimeout(() => burst(W*0.85, H*0.5, 45), 420);
+  setTimeout(() => burst(W/2, H*0.2, 50), 650);
+}, 200);
+
+animLoop();
+window.addEventListener('resize', resize);
+
+// Periodic auto-bursts
+let autoBurstIdx = 0;
+const autoBurstPositions = [[0.2,0.3],[0.8,0.3],[0.5,0.15],[0.1,0.6],[0.9,0.6]];
+setInterval(() => {
+  const [px,py] = autoBurstPositions[autoBurstIdx % autoBurstPositions.length];
+  burst(W*px, H*py, 22);
+  autoBurstIdx++;
+}, 3200);
+
+/* ── Click handler ── */
+document.addEventListener('click', e => {
+  // Ripple
+  const rp = document.createElement('div');
+  rp.className = 'ripple';
+  rp.style.left = e.clientX + 'px';
+  rp.style.top  = e.clientY + 'px';
+  document.body.appendChild(rp);
+  setTimeout(() => rp.remove(), 700);
+
+  // Burst
+  burst(e.clientX, e.clientY, 32);
+
+  // Floating twemoji from floatLayer
+  const floatLayer = document.getElementById('floatLayer');
+  for (let i = 0; i < 4; i++) {
+    const key = T.floaters[Math.floor(rand(0, T.floaters.length))];
+    const sz  = rand(22, 38);
+    const el  = document.createElement('div');
+    el.className = 'css-floater';
+    el.style.cssText = `
+      left:${e.clientX + rand(-40,40)}px;
+      top:${e.clientY}px;
+      width:${sz}px; height:${sz}px;
+      animation-duration:${rand(1.4,2.4)}s;
+      animation-delay:${i*0.08}s;
+    `;
+    const im = document.createElement('img');
+    im.src = src(key);
+    im.style.cssText = 'width:100%;height:100%';
+    el.appendChild(im);
+    floatLayer.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  }
+});
+
+/* ── Cake click ── */
+function cakeClick() {
+  const cake = document.getElementById('cakeImg');
+  cake.style.animation = 'none';
+  cake.style.transform = 'scale(1.4) rotate(12deg)';
+  cake.style.filter = `drop-shadow(0 0 40px ${T.accA}) drop-shadow(0 0 20px ${T.accB})`;
+  setTimeout(() => {
+    cake.style.transform = '';
+    cake.style.filter = '';
+    cake.style.animation = '';
+  }, 380);
+  burst(W/2, H*0.28, 65);
+  // extra corner bursts
+  setTimeout(() => burst(W*0.1, H*0.1, 25), 100);
+  setTimeout(() => burst(W*0.9, H*0.1, 25), 200);
+}
+
+/* ── Pill click ── */
+function pillClick(el, key) {
+  el.style.transform = 'scale(1.5) rotate(15deg)';
+  setTimeout(() => el.style.transform = '', 300);
+  const rect = el.getBoundingClientRect();
+  burst(rect.left + rect.width/2, rect.top + rect.height/2, 22);
+}
+
+</script>
+</body>
+</html>
